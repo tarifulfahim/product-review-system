@@ -1,5 +1,4 @@
-import { ProductDetails } from "@/components/ProductDetails";
-import { ReviewList } from "@/components/ReviewList";
+import { ProductPageClient } from "@/components/ProductPageClient";
 import { Product } from "@/types/product";
 import { Review } from "@/types/review";
 
@@ -187,10 +186,5 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     );
   }
 
-  return (
-    <div className="container mx-auto py-8 px-4 space-y-8">
-      <ProductDetails product={product} />
-      <ReviewList reviews={reviews} />
-    </div>
-  );
+  return <ProductPageClient product={product} initialReviews={reviews} />;
 }
