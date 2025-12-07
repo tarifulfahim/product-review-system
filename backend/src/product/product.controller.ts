@@ -20,7 +20,7 @@ export class ProductController {
     return this.productService.registerProduct(info);
   }
 
-  @Get('allProducts')
+  @Get('/')
   getAllProduct() {
     return this.productService.getAllProducts();
   }

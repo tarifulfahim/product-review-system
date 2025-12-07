@@ -1,6 +1,7 @@
 import api from "./api";
 
 export interface ProductApiResponse {
+  id: string;
   name: string;
   description: string | null;
   average_rating: string | null;
@@ -88,10 +89,31 @@ export const reviewApi = {
   },
 };
 
+/**
+ * Server-side fetch function for products (uses native fetch for Next.js)
+ */
+export async function fetchProducts() {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001/api";
+  const res = await fetch(`${baseUrl}/products/`, {
+    cache: "no-store",
+  });
+
+  console.log(res);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch products");
+  }
+
+  const data: ProductApiResponse[] = await res.json();
+  console.log(data);
+  return data.map(transformers.productToFrontend);
+}
+
 export const transformers = {
   //   Transform backend product to frontend format
-  productToFrontend: (product: ProductApiResponse & { id?: string }) => ({
-    id: product.id || "",
+  productToFrontend: (product: ProductApiResponse) => ({
+    id: product.id,
     name: product.name,
     description: product.description || "",
     averageRating: parseFloat(product.average_rating || "0"),
