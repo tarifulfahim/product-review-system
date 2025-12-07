@@ -14,27 +14,31 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 interface ReviewFormProps {
-  onSubmit: (data: { email: string; rating: number; comment: string }) => void;
+  onSubmit: (data: {
+    email: string;
+    rating: number;
+    comment: string;
+  }) => void | Promise<void>;
+  isSubmitting?: boolean;
 }
 
-export function ReviewForm({ onSubmit }: ReviewFormProps) {
+export function ReviewForm({
+  onSubmit,
+  isSubmitting = false,
+}: ReviewFormProps) {
   const [email, setEmail] = useState("");
   const [rating, setRating] = useState<string>("5");
   const [comment, setComment] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     if (!email || !comment) {
       alert("Please fill in all fields");
       return;
     }
 
-    // Submit the review
-    onSubmit({ email, rating: Number(rating), comment });
-
-    // Clear form
+    await onSubmit({ email, rating: Number(rating), comment });
     setEmail("");
     setRating("5");
     setComment("");
@@ -56,7 +60,8 @@ export function ReviewForm({ onSubmit }: ReviewFormProps) {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="your.email@example.com"
+              placeholder="your.email@gmail.com"
+              disabled={isSubmitting}
               required
             />
           </div>
@@ -65,7 +70,11 @@ export function ReviewForm({ onSubmit }: ReviewFormProps) {
             <label htmlFor="rating" className="block text-sm font-medium mb-2">
               Rating
             </label>
-            <Select value={rating} onValueChange={setRating}>
+            <Select
+              value={rating}
+              onValueChange={setRating}
+              disabled={isSubmitting}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select a rating" />
               </SelectTrigger>
@@ -89,12 +98,13 @@ export function ReviewForm({ onSubmit }: ReviewFormProps) {
               onChange={(e) => setComment(e.target.value)}
               placeholder="Share your experience with this product..."
               className="min-h-[100px]"
+              disabled={isSubmitting}
               required
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            Submit Review
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit Review"}
           </Button>
         </form>
       </CardContent>

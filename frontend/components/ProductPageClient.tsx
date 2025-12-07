@@ -6,37 +6,71 @@ import { Review } from "@/types/review";
 import { ProductDetails } from "./ProductDetails";
 import { ReviewForm } from "./ReviewForm";
 import { ReviewList } from "./ReviewList";
+import { reviewApi, transformers } from "@/lib/apiClient";
 
 interface ProductPageClientProps {
   product: Product;
   initialReviews: Review[];
 }
 
-export function ProductPageClient({ product, initialReviews }: ProductPageClientProps) {
+export function ProductPageClient({
+  product,
+  initialReviews,
+}: ProductPageClientProps) {
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
+  const [currentProduct, setCurrentProduct] = useState<Product>(product);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleReviewSubmit = (data: { email: string; rating: number; comment: string }) => {
-    // Generate new ID based on existing reviews
-    const newId = reviews.length > 0 ? Math.max(...reviews.map(r => r.id)) + 1 : 1;
+  const handleReviewSubmit = async (data: {
+    email: string;
+    rating: number;
+    comment: string;
+  }) => {
+    setIsSubmitting(true);
 
-    // Create new review object
-    const newReview: Review = {
-      id: newId,
-      productId: product.id,
-      rating: data.rating,
-      comment: data.comment,
-      authorEmail: data.email,
-      date: new Date().toISOString().split('T')[0], // Format: YYYY-MM-DD
-    };
+    try {
+      const reviewPayload = transformers.reviewToBackend(
+        data.email,
+        data.rating,
+        data.comment
+      );
 
-    // Add new review to the beginning of the array (most recent first)
-    setReviews([newReview, ...reviews]);
+      const newReview = await reviewApi.createReview(
+        currentProduct.id,
+        reviewPayload
+      );
+
+      const transformedReview = transformers.reviewToFrontend({
+        ...newReview,
+        product_id: currentProduct.id,
+      });
+      setReviews([transformedReview, ...reviews]);
+
+      const newReviewCount = currentProduct.reviewCount + 1;
+      const newAverageRating =
+        (currentProduct.averageRating * currentProduct.reviewCount +
+          data.rating) /
+        newReviewCount;
+
+      setCurrentProduct({
+        ...currentProduct,
+        reviewCount: newReviewCount,
+        averageRating: parseFloat(newAverageRating.toFixed(2)),
+      });
+
+      alert("Review submitted successfully!");
+    } catch (error: unknown) {
+      console.error("Failed to submit review:", error);
+      alert("Error submitting review!");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="container mx-auto py-8 px-4 space-y-8">
-      <ProductDetails product={product} />
-      <ReviewForm onSubmit={handleReviewSubmit} />
+      <ProductDetails product={currentProduct} />
+      <ReviewForm onSubmit={handleReviewSubmit} isSubmitting={isSubmitting} />
       <ReviewList reviews={reviews} />
     </div>
   );
