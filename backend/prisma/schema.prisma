@@ -19,7 +19,7 @@ model Products {
   name           String   @unique
   description    String?
   average_rating String?
-  review_count   String? 
+  review_count   String?
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 
@@ -30,7 +30,7 @@ model Reviews {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   rating     String
   user_email String
-  comment    String  
+  comment    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   product    Products @relation(fields: [product_id], references: [id])
@@ -41,7 +41,7 @@ model Users {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   email      String   @unique
-  password   String  
+  password   String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
