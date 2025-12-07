@@ -5,9 +5,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class ProductService {
   constructor(private prisma: PrismaService) {}
-  // async getAllProducts() {
-  //   return this.prisma.products.findMany();
-  // }
 
   async registerProduct(info: ProductDTO[]) {
     const product = await this.prisma.products.createMany({
@@ -18,7 +15,12 @@ export class ProductService {
 
   async getAllProducts() {
     const products = await this.prisma.products.findMany({
-      select: { name: true, description: true, average_rating: true },
+      select: {
+        name: true,
+        description: true,
+        average_rating: true,
+        review_count: true,
+      },
     });
     return products;
   }
@@ -37,6 +39,8 @@ export class ProductService {
       message: 'Product Info & Review',
       name: product?.name,
       description: product?.description,
+      average_rating: product?.average_rating,
+      revire_count: product?.review_count,
       reviews: review,
     };
   }
