@@ -30,7 +30,7 @@ model Reviews {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   rating     String
   user_email String
-  comment    Boolean  @default(false)
+  comment    String  
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   product    Products @relation(fields: [product_id], references: [id])

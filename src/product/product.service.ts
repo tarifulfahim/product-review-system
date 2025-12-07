@@ -22,4 +22,22 @@ export class ProductService {
     });
     return products;
   }
+
+  async singleProduct(id: string) {
+    const product = await this.prisma.products.findFirst({
+      where: { id: id },
+    });
+
+    const review = await this.prisma.reviews.findMany({
+      select: { user_email: true, rating: true, comment: true },
+      where: { product_id: id },
+    });
+
+    return {
+      message: 'Product Info & Review',
+      name: product?.name,
+      description: product?.description,
+      reviews: review,
+    };
+  }
 }

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
@@ -29,5 +30,10 @@ export class ProductController {
   @Get('allProducts')
   getAllProduct() {
     return this.productService.getAllProducts();
+  }
+
+  @Get('singleProduct/:id')
+  singleProduct(@Param('id') id: string) {
+    return this.productService.singleProduct(id);
   }
 }
