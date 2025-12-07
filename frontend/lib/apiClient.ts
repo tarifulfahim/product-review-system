@@ -12,6 +12,7 @@ export interface ProductApiResponse {
 
 export interface SingleProductApiResponse {
   message: string;
+  id: string;
   name: string;
   description: string | null;
   average_rating: string | null;
@@ -22,9 +23,11 @@ export interface SingleProductApiResponse {
 }
 
 export interface ReviewApiResponse {
+  id: string;
   user_email: string;
   rating: string;
   comment: string;
+  created_at: Date;
 }
 
 export interface CreateReviewPayload {
@@ -110,6 +113,41 @@ export async function fetchProducts() {
   return data.map(transformers.productToFrontend);
 }
 
+/**
+ * Server-side fetch function for single product with reviews
+ */
+export async function fetchSingleProduct(id: string) {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001/api";
+  const res = await fetch(`${baseUrl}/products/singleProduct/${id}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch product");
+  }
+
+  const data: SingleProductApiResponse = await res.json();
+
+  return {
+    product: {
+      id: data.id,
+      name: data.name,
+      description: data.description || "",
+      averageRating: parseFloat(data.average_rating || "0"),
+      reviewCount: parseInt(data.revire_count || "0", 10),
+    },
+    reviews: data.reviews.map((review) => ({
+      id: review.id,
+      productId: data.id,
+      rating: parseFloat(review.rating),
+      comment: review.comment,
+      authorEmail: review.user_email,
+      date: new Date(review.created_at).toISOString().split("T")[0],
+    })),
+  };
+}
+
 export const transformers = {
   //   Transform backend product to frontend format
   productToFrontend: (product: ProductApiResponse) => ({
@@ -123,19 +161,15 @@ export const transformers = {
   //   Transform backend review to frontend format
   reviewToFrontend: (
     review: ReviewApiResponse & {
-      id?: string;
       product_id?: string;
-      created_at?: Date;
     }
   ) => ({
-    id: review.id || "",
+    id: review.id,
     productId: review.product_id || "",
     rating: parseFloat(review.rating),
     comment: review.comment,
     authorEmail: review.user_email,
-    date: review.created_at
-      ? new Date(review.created_at).toISOString().split("T")[0]
-      : "",
+    date: new Date(review.created_at).toISOString().split("T")[0],
   }),
 
   //   Transform frontend review form to backend format

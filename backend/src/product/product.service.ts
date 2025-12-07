@@ -34,12 +34,19 @@ export class ProductService {
     });
 
     const review = await this.prisma.reviews.findMany({
-      select: { user_email: true, rating: true, comment: true },
+      select: {
+        id: true,
+        user_email: true,
+        rating: true,
+        comment: true,
+        created_at: true,
+      },
       where: { product_id: id },
     });
 
     return {
       message: 'Product Info & Review',
+      id: product?.id,
       name: product?.name,
       description: product?.description,
       average_rating: product?.average_rating,
