@@ -1,18 +1,24 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Product } from "@/types/product";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  // const handleClick = () => {
-  //   // Empty for now - will be implemented later
-  // };
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/products/${product.id}`);
+  };
 
   return (
     <Card 
       className="cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={handleClick}
     >
       <CardHeader>
         <CardTitle>{product.name}</CardTitle>
