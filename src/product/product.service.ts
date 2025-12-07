@@ -20,6 +20,8 @@ export class ProductService {
         description: true,
         average_rating: true,
         review_count: true,
+        created_at: true,
+        updated_at: true,
       },
     });
     return products;
@@ -41,6 +43,8 @@ export class ProductService {
       description: product?.description,
       average_rating: product?.average_rating,
       revire_count: product?.review_count,
+      created_at: product?.created_at,
+      updated_at: product?.updated_at,
       reviews: review,
     };
   }

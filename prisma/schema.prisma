@@ -36,3 +36,12 @@ model Reviews {
   product    Products @relation(fields: [product_id], references: [id])
   product_id String   @db.ObjectId
 }
+
+model Users {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  email      String   @unique
+  password   String  
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
