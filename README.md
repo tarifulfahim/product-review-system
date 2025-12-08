@@ -85,16 +85,12 @@ pnpm dev
 
 The frontend application will start on `http://localhost:3000`
 
-## Additional Scripts
+User Credentials For Login
 
-### Backend
+Admin Login
+email : john@gmail.com
+password: password123
 
-- `npm run build` - Build the application
-- `npm run start:prod` - Run production build
-- `npm run test` - Run tests
-
-### Frontend
-
-- `pnpm build` - Build the application for production
-- `pnpm start` - Run production build
-- `pnpm lint` - Run linter
+Associate Login
+email: fahim@gmail.com
+password: password123
