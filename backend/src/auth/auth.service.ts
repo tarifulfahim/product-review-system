@@ -65,9 +65,6 @@ export class AuthService {
       role,
     };
 
-    console.log({ payload });
-    console.log('secret', process.env.JWT_SECRET);
-
     return {
       access_token: this.jwtService.sign(payload),
       user,
