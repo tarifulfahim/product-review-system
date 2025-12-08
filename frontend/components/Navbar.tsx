@@ -2,10 +2,12 @@
 
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
+import { usePermissions } from "@/lib/permissions/usePermissions"
 import Link from "next/link"
 
 export function Navbar() {
   const { isAuthenticated, user, logout } = useAuth()
+  const { canViewUsers } = usePermissions()
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -21,6 +23,14 @@ export function Navbar() {
             >
               Products
             </Link>
+            {canViewUsers() && (
+              <Link 
+                href="/users" 
+                className="text-sm font-medium transition-colors hover:text-primary"
+              >
+                Users
+              </Link>
+            )}
           </div>
         </div>
         

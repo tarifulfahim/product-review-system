@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Request,
   Res,
@@ -48,5 +49,11 @@ export class AuthController {
   logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('auth_token');
     return { message: 'Logged out successfully' };
+  }
+
+  @Get('users')
+  @UseGuards(JwtAuthGuard)
+  getAllUsers() {
+    return this.authService.getAllUsers();
   }
 }

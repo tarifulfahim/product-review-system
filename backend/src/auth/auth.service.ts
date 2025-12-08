@@ -70,4 +70,21 @@ export class AuthService {
       user,
     };
   }
+
+  async getAllUsers() {
+    const users = await this.prisma.users.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        created_at: true,
+        updated_at: true,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+    return users;
+  }
 }
